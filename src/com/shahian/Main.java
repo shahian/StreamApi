@@ -23,8 +23,71 @@ public class Main {
         streamMap(names);
         streamFlatMap(names);
         streamPeek(names);
+        streamSkipAndLimit(names);
+        streamDistinct(names);
+        streamSorted(names);
+        streamParallel(names);
 
 
+    }
+
+    private static void streamParallel(String[] names) {
+        int total = Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                .parallel()
+                .reduce(0, Integer::sum);
+        System.out.println("total with parallel : " + total);
+        int total1 = Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                .sequential()
+                .reduce(0, (x, y) -> x + y);
+        System.out.println("total with sequential : " + total1);
+
+        long startParallel = System.currentTimeMillis();
+        Arrays.stream(names).parallel().filter(x -> x.startsWith("h")).forEach(x -> System.out.println(x));
+        long endParallel = System.currentTimeMillis();
+
+        System.out.println(" compute Parallel times :" + (endParallel-startParallel));
+
+        long startSequential = System.currentTimeMillis();
+        Arrays.stream(names).sequential().filter(x -> x.startsWith("h")).forEach(x -> System.out.println(x));
+        long endSequential = System.currentTimeMillis();
+
+        System.out.println(" compute sequential  times :" + (endSequential-startSequential));
+
+    }
+
+    private static void streamSorted(String[] names) {
+        String[] namesD2 = {"hamidrezaD2", "ShahianD2", "JavaD2", "Stream Api Java 8D2"};
+
+        String[][] strings = {names, namesD2};
+        String[] strings2 = Stream.of(strings)
+                .flatMap(strings1 -> Stream.of(strings1))
+                .peek(s -> System.out.println("peek : " + s))
+                .toArray(value -> new String[value]);
+        Arrays.stream(strings2).sorted().forEach(s -> System.out.println("sorted :" + s));
+    }
+
+    private static void streamDistinct(String[] names) {
+        String[] namesD2 = {"hamidrezaD2", "ShahianD2", "JavaD2", "Stream Api Java 8D2"};
+
+        String[][] strings = {names, namesD2};
+        String[] strings2 = Stream.of(strings)
+                .flatMap(strings1 -> Stream.of(strings1))
+                .peek(s -> System.out.println("peek : " + s))
+                .toArray(value -> new String[value]);
+        long count = Arrays.stream(strings2).distinct().count();
+        System.out.println("distinct : " + count);
+    }
+
+    private static void streamSkipAndLimit(String[] names) {
+        String[] namesD2 = {"hamidrezaD2", "ShahianD2", "JavaD2", "Stream Api Java 8D2"};
+
+        String[][] strings = {names, namesD2};
+        String[] strings2 = Stream.of(strings)
+                .flatMap(strings1 -> Stream.of(strings1))
+                .toArray(value -> new String[value]);
+        Arrays.stream(strings2).skip(1).forEach(s -> System.out.println("skip : " + s));
+        Arrays.stream(strings2).limit(1).forEach(s -> System.out.println("limit : " + s));
+        Arrays.stream(strings2).skip(2).limit(3).forEach(s -> System.out.println("skip And limit : " + s));
     }
 
     private static void streamPeek(String[] names) {
@@ -59,9 +122,22 @@ public class Main {
     }
 
     private static void streamReduse() {
+        //In Java 8, the Stream.reduce() combine elements of a stream and produces a single value.
         int[] ints = {1, 2, 3, 4, 5};
         int reduce = Arrays.stream(ints).reduce(0, (left, right) -> left + right);
         System.out.println("reduse :" + reduce);
+        //or
+        int reduce1 = Arrays.stream(ints).reduce(0, Integer::sum);
+        System.out.println("reduse1 :" + reduce1);
+        int sum3 = Arrays.stream(ints).reduce(0, (a, b) -> a - b);
+        System.out.println("sum3 :" + sum3);
+
+        int sum4 = Arrays.stream(ints).reduce(1, (a, b) -> a * b);
+        System.out.println("sum4 :" + sum4);
+
+        int sum5 = Arrays.stream(ints).reduce(1, (a, b) -> a / b);
+        System.out.println("sum5 :" + sum5);
+
     }
 
     private static void streanCollect(String[] names) {
