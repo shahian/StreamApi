@@ -1,9 +1,6 @@
 package com.shahian;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,14 +19,15 @@ public class Main {
         streamFilter(names);
         streamMap(names);
         streamFlatMap(names);
+        flattenListOfListsStream();
         streamPeek(names);
         streamSkipAndLimit(names);
         streamDistinct(names);
         streamSorted(names);
         streamParallel(names);
 
-
     }
+
 
     private static void streamParallel(String[] names) {
         int total = Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
@@ -45,13 +43,13 @@ public class Main {
         Arrays.stream(names).parallel().filter(x -> x.startsWith("h")).forEach(x -> System.out.println(x));
         long endParallel = System.currentTimeMillis();
 
-        System.out.println(" compute Parallel times :" + (endParallel-startParallel));
+        System.out.println(" compute Parallel times :" + (endParallel - startParallel));
 
         long startSequential = System.currentTimeMillis();
         Arrays.stream(names).sequential().filter(x -> x.startsWith("h")).forEach(x -> System.out.println(x));
         long endSequential = System.currentTimeMillis();
 
-        System.out.println(" compute sequential  times :" + (endSequential-startSequential));
+        System.out.println(" compute sequential  times :" + (endSequential - startSequential));
 
     }
 
@@ -109,6 +107,22 @@ public class Main {
         for (String s : strings2) {
             System.out.println("2 dimensional to 1dimensional : " + s);
         }
+    }
+
+    public static <T> List<T> flattenListOfListsStream(List<List<T>> list) {
+        return list.stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
+
+    private static void flattenListOfListsStream() {
+        List<List<String>> nestedList = Arrays.asList(
+                Arrays.asList("one:two"),
+                Arrays.asList("two:one", "two:two", "two: three "),
+                Arrays.asList("three:one", "three:two", "three:three")
+        );
+        List<String> ls = flattenListOfListsStream(nestedList);
+        System.out.println("flattenListOfListsStream : " + ls);
     }
 
     private static void streamMap(String[] names) {
